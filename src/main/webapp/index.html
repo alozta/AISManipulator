@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Map</title>
+    <script src="libs/jquery.min.js"></script>
+    <script src="libs/bootstrap.min.js"></script>
+    <script src="libs/bootstrap-select.min.js"></script>
+    <script src="libs/leaflet.js"></script>
+    <script src='https://api.mapbox.com/mapbox.js/v2.4.0/mapbox.js'></script>
+    <script src="scripts/loader.js"></script>
+    <script src="scripts/mongoConnection.js"></script>
+
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/bootstrap-theme.min.css">
+    <link rel="stylesheet" href="css/bootstrap-select.min.css">
+    <link rel="stylesheet" href="css/leaflet.css">
+    <link href='https://api.mapbox.com/mapbox.js/v2.4.0/mapbox.css' rel='stylesheet' />
+</head>
+<body onload="init()">
+    <!-- <div id="map" class="map"></div> -->
+    <div id="mapid" style="height: 600px;"></div>
+    <div id="input">
+        <select id="mmsiSelectBox" class="selectpicker"><option selected disabled>3588 vessels</option></select>
+        <input size="16" type="date" id="startDate">
+        <input size="16" type="date" id="endDate">
+        <button type="button" class="btn btn-primary" onclick="getVesselInfo()">Display</button>
+        <button type="button" class="btn btn-warning" onclick="reset()">Reset</button>
+    </div>
+</body>
+</html>
+
+<script>
+    fillMMMSISelectBox();
+</script>
