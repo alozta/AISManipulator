@@ -15,9 +15,12 @@ function getVesselInfo(){
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {             //SERVER RESPONSE READY
         if (this.readyState == 4 && this.status == 200) {
-        console.log("response text:\n"+this.responseText);
+            console.log("response text:\n"+this.responseText);
             if(this.responseText==''){              //in case of server request fails
                 alert('Date interval for this vessel exceeds the system limitations. Choose a smaller one.');
+                return;
+            }else if(this.responseText=='[]'){
+                alert('No activities that interval.');
                 return;
             }
             var response = JSON.parse(this.responseText);
@@ -27,7 +30,7 @@ function getVesselInfo(){
                 //response[i]['lat']
                 //response[i]['lon']
                 var lon = response[i]['lon'].replace(/,/g, '.');
-                var lat = response[i]['lat'].replace(/,/g, '.');
+                var lat = response[i]['lat'].replace(/,/g, '.');            //convert coordinates to dot point notation
                 //console.log(lon,lat);
                 route.push([parseFloat(lat),parseFloat(lon)]);
             }
@@ -36,14 +39,18 @@ function getVesselInfo(){
             /*var marker = L.marker([41.0, 29]);
             marker.addTo(mymap);*/                  //test: dynamic layer addition, OK
 
-            var firstpolyline = new L.Polyline(route, {
+            var selectedRoutePolyline = new L.Polyline(route, {
                 color: getRandomColor(),
                 weight: 3,
                 opacity: 0.5,
                 smoothFactor: 1
             });
-            firstpolyline.addTo(mymap);             //add polyline layer to the map
-            //console.log(response);
+            selectedRoutePolyline.addTo(mymap);                             //add polyline layer to the map
+            setHoverPopup(selectedRoutePolyline, mmsi);                     //pop-up mmsi
+            selectedRoutePolyline.on('click', function(){
+                mymap.removeLayer(selectedRoutePolyline);
+            });
+
             console.log("server is responded");
         }
     }
@@ -83,9 +90,7 @@ function fillMMMSISelectBox(){
  * Reset.
  */
 function reset(){
-    document.getElementById("mmsiSelectBox").value = '';
-    document.getElementById("startDate").value = '';
-    document.getElementById("endDate").value = '';
+    location.reload();
 }
 
 /**
