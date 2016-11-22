@@ -62,5 +62,28 @@ public class WebService {
 
 			return (ArrayList<Document>) new Document().get("retval");
 		}
+
+		@CrossOrigin
+		@RequestMapping("/isInsideOfCircle")
+		public Document isInsideOfCircle(@RequestParam(value="lat", defaultValue="none") String lat,
+		                                            @RequestParam(value="lon", defaultValue="none") String lon,
+		                                            @RequestParam(value="r", defaultValue="none") String r,
+		                                            @RequestParam(value="mmsi", defaultValue="none") String mmsi) {
+			String cmd = "isInsideOfCircle(\""+lat+"\",\""+lon+"\",\""+r+"\",\""+mmsi+"\")";
+			Document d = (Document) MongoConfig.getMongoClient().getDatabase("bitirme").runCommand(new Document("$eval", cmd));
+
+			return d;
+		}
+
+		@CrossOrigin
+		@RequestMapping("/getVesselsInCircleRange")
+		public Document getVesselsInCircleRange(@RequestParam(value="lat", defaultValue="none") String lat,
+		                                                         @RequestParam(value="lon", defaultValue="none") String lon,
+		                                                         @RequestParam(value="r", defaultValue="none") String r) {
+			String cmd = "getVesselsInCircleRange(\""+lat+"\",\""+lon+"\",\""+r+"\")";
+			Document d = (Document) MongoConfig.getMongoClient().getDatabase("bitirme").runCommand(new Document("$eval", cmd));
+
+			return d;
+		}
 	}
 }

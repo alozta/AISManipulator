@@ -8,9 +8,8 @@ var mymap;
  */
 function init(){
     //initialize the map
-    L.mapbox.accessToken = '';
-    L.mapbox.accessToken = '';
-    mymap = L.mapbox.map('mapid', '', {
+    L.mapbox.accessToken = mapboxAccessToken;
+    mymap = L.mapbox.map('mapid', mapboxMapid, {
             center: [41.015137, 28.979530],
             zoom: 10
         });
