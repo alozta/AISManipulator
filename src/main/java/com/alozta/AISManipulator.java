@@ -43,7 +43,7 @@ public class AISManipulator {
 
 		SpringApplication.run(WebService.class, args);
 
-		saveOfflineVesselData();
+		//saveOfflineVesselData();
 	}
 
 	public static void saveOfflineVesselData(){

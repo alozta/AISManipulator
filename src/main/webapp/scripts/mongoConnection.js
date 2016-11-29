@@ -15,29 +15,19 @@ function getVesselInfo(){
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {             //SERVER RESPONSE READY
         if (this.readyState == 4 && this.status == 200) {
-            console.log("response text:\n"+this.responseText);
+            //console.log("response text:\n"+this.responseText);
+
             if(this.responseText==''){              //in case of server request fails
-                alert('Date interval for this vessel exceeds the system limitations. Choose a smaller one.');
+                alert('Data is broken for this one :( @failed_mongo_function');
                 return;
             }else if(this.responseText=='[]'){
-                alert('No activities that interval.');
+                alert('Data is broken for this one :( @empty_offline_data');
                 return;
             }
             var response = JSON.parse(this.responseText);
 
-            var route = [];
-            for(var i=0; i<Object.keys(response).length; ++i){
-                //response[i]['lat']
-                //response[i]['lon']
-                var lon = response[i]['lon'].replace(/,/g, '.');
-                var lat = response[i]['lat'].replace(/,/g, '.');            //convert coordinates to dot point notation
-                //console.log(lon,lat);
-                route.push([parseFloat(lat),parseFloat(lon)]);
-            }
-            //console.log(route);
-
-            /*var marker = L.marker([41.0, 29]);
-            marker.addTo(mymap);*/                  //test: dynamic layer addition, OK
+            var route = getMyVesselInfo(response,start,end);                //get data between start and end date
+            console.log(route);
 
             var selectedRoutePolyline = new L.Polyline(route, {
                 color: getRandomColor(),
@@ -55,7 +45,8 @@ function getVesselInfo(){
         }
     }
 
-    var url="http://127.0.0.1:8080/getvesselinfo?mmsi="+mmsi+"&start="+start+"&end="+end;
+    var url="http://127.0.0.1:8080/getvesselinfo?i="+getVesselIndex(mmsi);
+    console.log('url is sent: '+url);
     if ("withCredentials" in xhttp) {
         xhttp.open("GET", url, false);      //true asynchronous
     }
@@ -103,5 +94,33 @@ function getRandomColor() {
         color += letters[Math.floor(Math.random() * 16)];
     }
     return color;
+}
+
+/*
+ * @return mmsi index on the selectbox.
+ */
+function getVesselIndex(mmsi){
+    for(var i=0; i<distinct_vessel_mmsi.length; ++i){
+        if(distinct_vessel_mmsi[i] == mmsi){
+            return i;
+        }
+    }
+    return -1;
+}
+
+/*
+ * Equivalent of previously written mongodb function.
+ * @param data json array
+ * @startDate iso date
+ * @endDate iso date
+ * @return route with certain date interval.
+ */
+function getMyVesselInfo(data,startDate,endDate){
+    route = [];
+    for(var i=0; i<data.length; ++i){
+        if(data[i].date > startDate && data[i].date < endDate)
+            route.push([parseFloat(data[i].lat.replace(/,/g, '.')), parseFloat(data[i].lon.replace(/,/g, '.'))]);
+    }
+    return route;
 }
 

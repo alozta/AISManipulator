@@ -9,6 +9,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -45,7 +48,23 @@ public class WebService {
 
 		@CrossOrigin
 		@RequestMapping("/getvesselinfo")
-		public ArrayList<Document> getVesselInfo(@RequestParam(value="mmsi", defaultValue="none") String mmsi,
+		public String getVesselInfo(@RequestParam(value="i", defaultValue="none") String i) {
+			try {
+				BufferedReader br = new BufferedReader(new FileReader("C:\\Users\\Ozan\\Desktop\\Bitirme\\AIS_data\\offline\\vd_"+i+".txt"));
+				String line = br.readLine();
+				br.close();
+				if(line==null) return "[]";
+				line = line.substring(line.indexOf('['), line.length()-1);
+				return line;
+			} catch (IOException e) {
+				e.printStackTrace();
+				return "[]";
+			}
+		}
+
+		@CrossOrigin
+		@RequestMapping("/getvesselinfoold")
+		public ArrayList<Document> getVesselInfoold(@RequestParam(value="mmsi", defaultValue="none") String mmsi,
 		                                @RequestParam(value="start", defaultValue="none") String startDate,
 		                                @RequestParam(value="end", defaultValue="none") String endDate) {
 			//String cmd = "getVesselInfo(\""+mmsi+"\",\""+startDate+"\",\""+endDate+"\")";
