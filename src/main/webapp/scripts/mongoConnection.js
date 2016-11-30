@@ -27,7 +27,7 @@ function getVesselInfo(){
             var response = JSON.parse(this.responseText);
 
             var route = getMyVesselInfo(response,start,end);                //get data between start and end date
-            console.log(route);
+            //console.log(route);
 
             var selectedRoutePolyline = new L.Polyline(route, {
                 color: getRandomColor(),

@@ -2,6 +2,7 @@
 
 //Globals
 var mymap;
+var lat, lng;
 
 /*
  * Initializer.
@@ -15,6 +16,7 @@ function init(){
         });
     mymap.doubleClickZoom.disable();
 
+    /* leaflet samples
     var marker = L.marker([41.015137, 28.979530]).addTo(mymap);
     setHoverPopup(marker, "I am a marker.");
     marker.on('click', function(){
@@ -48,9 +50,15 @@ function init(){
     firstpolyline.on('click', function(){
         mymap.removeLayer(firstpolyline);
     });
+    */
 
     $(document).ready(function() {
        $('.selectpicker').selectpicker();
+    });
+
+    mymap.addEventListener('mousemove', function(ev) {
+       lat = ev.latlng.lat;
+       lng = ev.latlng.lng;
     });
 }
 
