@@ -2,15 +2,24 @@
 
 /**
  * Get vessel info and draw it to the map.
+ * Mode 1 represents automatic calls between functions.
+ * Mode !1 expects user input to work with.
  */
-function getVesselInfo(){
+function getVesselInfo(mode,_mmsi,_start,_end){
     var mmsi = document.getElementById("mmsiSelectBox").value;
     var start = document.getElementById("startDate").value;
     var end = document.getElementById("endDate").value;
 
-    console.log(mmsi);
-    console.log(start);
-    console.log(end);
+    if(mode == 1){
+        mmsi = _mmsi;
+        start = _start;
+        end = _end;
+    }
+    else{
+        console.log(mmsi);
+        console.log(start);
+        console.log(end);
+    }
 
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {             //SERVER RESPONSE READY
@@ -18,16 +27,28 @@ function getVesselInfo(){
             //console.log("response text:\n"+this.responseText);
 
             if(this.responseText==''){              //in case of server request fails
-                alert('Data is broken for this one :( @failed_mongo_function');
+                if(mode != 1)
+                    alert('Data is broken for this one :( @failed_mongo_function');
+                else
+                    routeList.push([]);
                 return;
             }else if(this.responseText=='[]'){
-                alert('Data is broken for this one :( @empty_offline_data');
+                if(mode != 1)
+                    alert('Data is broken for this one :( @empty_offline_data');
+                else
+                    routeList.push([]);
                 return;
             }
             var response = JSON.parse(this.responseText);
 
-            var route = getMyVesselInfo(response,start,end);                //get data between start and end date
+            var route = getSpecificVesselInfo(response,start,end);                //get data between start and end date
             //console.log(route);
+
+            if(mode == 1){
+                routeList.push(route);
+                //console.log("route: " + route);
+                return;
+            }
 
             var selectedRoutePolyline = new L.Polyline(route, {
                 color: getRandomColor(),
@@ -115,7 +136,7 @@ function getVesselIndex(mmsi){
  * @endDate iso date
  * @return route with certain date interval.
  */
-function getMyVesselInfo(data,startDate,endDate){
+function getSpecificVesselInfo(data,startDate,endDate){
     route = [];
     for(var i=0; i<data.length; ++i){
         if(data[i].date > startDate && data[i].date < endDate)

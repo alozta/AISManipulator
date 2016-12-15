@@ -7,7 +7,7 @@ function(lat, lon, r, vesselMmsi) {
     var PI_DIV_180 = Math.PI / 180;
     var EARTH_RADIUS = 6371000;
 
-    var mmsiLog = getVesselInfo(vesselMmsi,"2013","2017").toArray();
+    var mmsiLog = getVesselInfo(0,vesselMmsi,"2013","2017").toArray();
 
     var fixedLat = parseFloat(lat);
     var fixedLon = parseFloat(lon);
