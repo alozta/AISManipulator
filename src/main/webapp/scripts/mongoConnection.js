@@ -63,6 +63,7 @@ function getVesselInfo(mode,_mmsi,_start,_end){
             });
 
             console.log("server is responded");
+            routeList.push([]);
         }
     }
 
