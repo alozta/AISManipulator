@@ -50,17 +50,19 @@ function getVesselInfo(mode,_mmsi,_start,_end){
                 return;
             }
 
-            var selectedRoutePolyline = new L.Polyline(route, {
-                color: getRandomColor(),
-                weight: 3,
-                opacity: 0.5,
-                smoothFactor: 1
-            });
-            selectedRoutePolyline.addTo(mymap);                             //add polyline layer to the map
-            setHoverPopup(selectedRoutePolyline, mmsi);                     //pop-up mmsi
-            selectedRoutePolyline.on('click', function(){
-                mymap.removeLayer(selectedRoutePolyline);
-            });
+            if(mode != 1){
+                var selectedRoutePolyline = new L.Polyline(route, {
+                    color: getRandomColor(),
+                    weight: 3,
+                    opacity: 0.5,
+                    smoothFactor: 1
+                });
+                selectedRoutePolyline.addTo(mymap);                             //add polyline layer to the map
+                setHoverPopup(selectedRoutePolyline, mmsi);                     //pop-up mmsi
+                selectedRoutePolyline.on('click', function(){
+                    mymap.removeLayer(selectedRoutePolyline);
+                });
+            }
 
             console.log("server is responded");
             routeList.push([]);
@@ -68,7 +70,7 @@ function getVesselInfo(mode,_mmsi,_start,_end){
     }
 
     var url="http://127.0.0.1:8080/getvesselinfo?i="+getVesselIndex(mmsi);
-    console.log('url is sent: '+url);
+    //console.log('url is sent: '+url);
     if ("withCredentials" in xhttp) {
         xhttp.open("GET", url, false);      //true asynchronous
     }
@@ -138,7 +140,7 @@ function getVesselIndex(mmsi){
  * @return route with certain date interval.
  */
 function getSpecificVesselInfo(data,startDate,endDate){
-    route = [];
+    var route = [];
     for(var i=0; i<data.length; ++i){
         if(data[i].date > startDate && data[i].date < endDate)
             route.push([parseFloat(data[i].lat.replace(/,/g, '.')), parseFloat(data[i].lon.replace(/,/g, '.'))]);
