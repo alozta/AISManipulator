@@ -1,5 +1,8 @@
 //mongoConnection.js
 
+//globals
+var route = [];
+
 /**
  * Get vessel info and draw it to the map.
  * Mode 1 represents automatic calls between functions.
@@ -26,7 +29,7 @@ function getVesselInfo(mode,_mmsi,_start,_end){
         if (this.readyState == 4 && this.status == 200) {
             //console.log("response text:\n"+this.responseText);
 
-            if(this.responseText==''){              //in case of server request fails
+            /*if(this.responseText==''){              //in case of server request fails
                 if(mode != 1)
                     alert('Data is broken for this one :( @failed_mongo_function');
                 else
@@ -38,13 +41,14 @@ function getVesselInfo(mode,_mmsi,_start,_end){
                 else
                     routeList.push([]);
                 return;
-            }
+            }*/
             var response = JSON.parse(this.responseText);
+            //console.log(JSON.stringify(response, null, 2));
 
-            var route = getSpecificVesselInfo(response,start,end);                //get data between start and end date
+            route = getSpecificVesselInfo(response,start,end);                //get data between start and end date
             //console.log(route);
 
-            if(mode == 1){
+            /*if(mode == 1){
                 routeList.push(route);
                 //console.log("route: " + route);
                 return;
@@ -62,10 +66,10 @@ function getVesselInfo(mode,_mmsi,_start,_end){
                 selectedRoutePolyline.on('click', function(){
                     mymap.removeLayer(selectedRoutePolyline);
                 });
-            }
+            }*/
 
-            console.log("server is responded");
-            routeList.push([]);
+            //console.log("server is responded");
+            //routeList.push([]);
         }
     }
 
@@ -146,5 +150,32 @@ function getSpecificVesselInfo(data,startDate,endDate){
             route.push([parseFloat(data[i].lat.replace(/,/g, '.')), parseFloat(data[i].lon.replace(/,/g, '.'))]);
     }
     return route;
+}
+
+function getResultAsJSON(_sampleN, start, end){
+    //var s = '[';
+    var s = '';
+    for(var i=0; i<_sampleN.length; ++i){
+        //console.log(_sampleN[i].date +" "+ _sampleN[i].mmsi);
+        getVesselInfo(1,_sampleN[i].mmsi,start,end);
+        var obj = new Object();
+        obj.mmsi = _sampleN[i].mmsi;
+        obj.date = start;
+        while(route.length == 0);
+        obj.route = '';
+        for(var j=0; j<route.length; ++j){
+            //obj.route += '{"_' + j + '":' + route[j] + '}';
+            obj.route += '[' + route[j] + ']';
+            if(j<route.length-1) obj.route += ',';
+        }
+        //console.log(obj.route);
+        route = [];
+        s += JSON.stringify(obj);
+        if(i<_sampleN.length-1) s += ',';
+        //console.log(JSON.stringify(obj));
+    }
+    //s += ']';
+    //s = s.replace(/\\/g,"");
+    console.log(s);
 }
 
